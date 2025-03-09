@@ -45,7 +45,7 @@ def calcula_pesos_e_pontos(n):
 
     return pesos, pontos
 
-N = 2  # Número de pontos de integração
+N = 3  # Número de pontos de integração
 pesos, pontos = calcula_pesos_e_pontos(N)
 print("Pesos:", pesos)
 print("Pontos:", pontos)

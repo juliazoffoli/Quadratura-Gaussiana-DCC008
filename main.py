@@ -1,7 +1,20 @@
 import math
 
-# regra de simpsom para f(x) = x^exp
-def Simpson_1_3(a, b, N):
+def calculo_w0_t0(a, b, N):
+    w = [0]*N
+    t = [0]*N
+
+    for i in range(1, N+1, 1):
+        if(i <= N/2):
+            w[i-1] = i*(b-a)/(2*N)
+            t[i-1] = a + (i*w[i-1])/2
+        else:
+            w[i-1] = w[math.floor(N/2 + (N/2-i))]
+            t[i-1] = (a+b) - t[math.floor(N/2 + (N/2-i))]
+
+    return (w, t)
+
+def g(a,b,N):
     m = 1000;
     h = (b - a)/m
 
@@ -31,26 +44,24 @@ def Simpson_1_3(a, b, N):
             integral += c * pow(x, exp)
         result[exp] = (h/3) * integral
     return result;
-    
+
+def definir_funcoes(w, t, a, b, N):
+    g_values = g(a, b, N)
+    funcoes = [0]*(2*N)
+
+    for j in range(1, 2*N + 1):
+        for i in range(N):
+            funcoes[j - 1] += w[i]*(t[i]**(j-1))
+        funcoes[j-1] -= g_values[j-1]
+
+    return funcoes
 a = -1
-b = 3
-N = 2
+b = 1
+N = 4
 
-w = [0]*N
-t = [0]*N
+w, t = calculo_w0_t0(a, b, N)
+print("w:", w)
+print("t:", t)
 
-for i in range(1, N+1, 1):
-    if(i <= N/2):
-        w[i-1] = i*(b-a)/(2*N)
-        t[i-1] = a + (i*w[i-1])/2
-    else:
-        w[i-1] = w[math.floor(N/2 + (N/2-i))]
-        t[i-1] = (a+b) - t[math.floor(N/2 + (N/2-i))]
-
-print(w, t)
-
-# calcular as integrais
-print(Simpson_1_3(a, b, N))
-
-
-
+funcoes = definir_funcoes(w, t, a, b, N)
+print("Funções f_j:", funcoes)
