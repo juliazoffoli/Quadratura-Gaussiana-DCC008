@@ -1,4 +1,6 @@
 import math
+import sympy as sp
+from sympy import symbols
 
 def calculo_w0_t0(a, b, N):
     w = [0]*N
@@ -45,7 +47,7 @@ def g(a,b,N):
         result[exp] = (h/3) * integral
     return result;
 
-def definir_funcoes(w, t, a, b, N):
+def definir_funcoes_original(w, t, a, b, N):
     g_values = g(a, b, N)
     funcoes = [0]*(2*N)
 
@@ -55,6 +57,20 @@ def definir_funcoes(w, t, a, b, N):
         funcoes[j-1] -= g_values[j-1]
 
     return funcoes
+
+def definir_funcoes(w, t, N):
+    # Criando variáveis simbólicas para w e t
+    w_sym = sp.symbols(f'w0:{N}')  # w0, w1, ..., w(N-1)
+    t_sym = sp.symbols(f't0:{N}')  # t0, t1, ..., t(N-1)
+
+    funcoes = []
+    for j in range(1, 2 * N + 1):  # j = 1, 2, ..., 2N
+        expr = 0
+        for i in range(N):  # i = 0, 1, ..., N-1
+            expr += w_sym[i] * (t_sym[i] ** (j - 1))  # w_i * t_i^(j-1)
+        funcoes.append(expr)
+    return funcoes
+
 a = -1
 b = 1
 N = 4
@@ -63,5 +79,9 @@ w, t = calculo_w0_t0(a, b, N)
 print("w:", w)
 print("t:", t)
 
-funcoes = definir_funcoes(w, t, a, b, N)
-print("Funções f_j:", funcoes)
+# Definindo as funções f_j
+funcoes = definir_funcoes(w, t, N)
+
+# Exibindo as expressões
+for j, expr in enumerate(funcoes, start=1):
+    print(f"f_{j}(w, t) = {expr}")
