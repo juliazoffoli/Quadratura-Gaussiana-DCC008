@@ -58,29 +58,38 @@ def definir_funcoes_original(w, t, a, b, N):
 
     return funcoes
 
-def definir_funcoes(w, t, N):
+def definir_funcoes(w, t, a, b, N):
     # Criando variáveis simbólicas para w e t
     w_sym = sp.symbols(f'w0:{N}')  # w0, w1, ..., w(N-1)
     t_sym = sp.symbols(f't0:{N}')  # t0, t1, ..., t(N-1)
+
+    # Calculando os valores de g_j
+    g_values = g(a, b, N)
 
     funcoes = []
     for j in range(1, 2 * N + 1):  # j = 1, 2, ..., 2N
         expr = 0
         for i in range(N):  # i = 0, 1, ..., N-1
             expr += w_sym[i] * (t_sym[i] ** (j - 1))  # w_i * t_i^(j-1)
+        
+        # Subtraindo g_j
+        expr -= g_values[j - 1]
         funcoes.append(expr)
+
     return funcoes
 
+# Exemplo de uso
 a = -1
 b = 1
 N = 4
 
+# Calculando w e t
 w, t = calculo_w0_t0(a, b, N)
 print("w:", w)
 print("t:", t)
 
 # Definindo as funções f_j
-funcoes = definir_funcoes(w, t, N)
+funcoes = definir_funcoes(w, t, a, b, N)
 
 # Exibindo as expressões
 for j, expr in enumerate(funcoes, start=1):
