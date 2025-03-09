@@ -45,13 +45,12 @@ def calcula_pesos_e_pontos(n):
 
     return pesos, pontos
 
-# Exemplo de uso
 N = 2  # Número de pontos de integração
 pesos, pontos = calcula_pesos_e_pontos(N)
 print("Pesos:", pesos)
 print("Pontos:", pontos)
 
-# Defina a função a ser integrada
+# Definindo a função a ser integrada
 t = symbols('t')
 f = t**2  # Exemplo: f(t) = t^2
 
