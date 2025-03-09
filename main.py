@@ -8,11 +8,11 @@ def Simpson_1_3(a, b, N):
     result = [0]*2*N
     c = 1
 
-    # para cada expoente de x até 2N-1
+    # para cada expoente de 0 até 2N-1
     for exp in range(0, 2*N, 1):
         integral = 0
 
-        # em Intervalo Simétrico e função par a integral vale 0
+        # em intervalo simétrico e função par a integral vale 0
         # exp +1 é o valor a ser integrado
         if(b == -a and (exp+1)%2 == 0):
             result[exp] = 0
@@ -33,7 +33,7 @@ def Simpson_1_3(a, b, N):
     return result;
     
 a = -1
-b = 1
+b = 3
 N = 2
 
 w = [0]*N
