@@ -112,9 +112,19 @@ def AproximaDerivada_QuasiNewton(N):
 
     return (dxW, dxT)
     
+def MontaMatriz(dW, dT): 
+    M = [[0] * N*N for _ in range(2 * N)]
+    for linha in range(0, 2*N):
+        for k in range(0, N*N):
+            # metade dos elementos da linha sao dWi e outra metade dTi
+            if(k < (N*N)/2):
+                M[linha][k] = dW[linha][k]
+            else: M[linha][k] = dT[linha][math.floor(k - (N*N)/2)]
+    return M
+
 a = -1
 b = 1
-N = 3
+N = 2
 
 # Calculando w e t
 w, t = calculo_w0_t0(a, b, N)
@@ -122,8 +132,10 @@ print("w:", w)
 print("t:", t)
 
 # todo fazer para N-1 graus da eq
-dW, dT = AproximaDerivada_QuasiNewton(0, N)
+dW, dT = AproximaDerivada_QuasiNewton(N)
 
+M = MontaMatriz(dW, dT)
+print(M)
 # Definindo as funções f_j
 funcoes = definir_funcoes(a, b, N)
 
