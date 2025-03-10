@@ -70,33 +70,67 @@ def definir_funcoes(a, b, N):
 def Matriz_Jacobiano(funcoes,N,):
     # Usando o método Quasi Newton para achar as derivadas parciais
 
-    for linha in range (2*N):
-        for coluna in range(2*N):
+    #for linha in range (2*N):
+        #for coluna in range(2*N):
 
+    return 0;
 
-    '''
-        coluna i (N colunas):
+def AproximaDerivada_QuasiNewton(N):
+    
+    e = 10e-10
+    dxW = [[0] * N for _ in range(2 * N)]
+    dxT = [[0] * N for _ in range(2 * N)]
 
-            derivada de flinha em relacao a wi
+    # para a quantidade de equações 2N o expoente de t varia de 0 a 2N-1
+    for power in range(0, 2*N):
 
-        coluna i (N colunas):
-            derivada de flinha em relacao a ti
+        # calcula as derivadas de todos os w e t com k indo de 0 a N
+        for k in range(0, N):
+            fx = 0
+            fxW = 0
+            fxT = 0
 
-    '''
+            # para todos os wi e ti identifica o elemento k que estamos derivando e faz os calculos
+            for i in range(0, N):
+                # calculo do fx normal 
+                Fa = w[i] * pow(t[i], power)
+                fx += Fa
 
+                # quando estamos derivando o termo k
+                if(k == i): 
+                    fxW += (w[i] + e) * pow(t[i], power)
+                    fxT += w[i] * pow((t[i] + e), power)
 
+                else: 
+                    fxW += Fa
+                    fxT += Fa
+
+            # matriz com 2N linhas e N colunas que guarda os N elementos derivados
+            # ex: w1 w2 e w2 para a primeira linha devem ser sempre =~ 1
+            dxW[power][k] = (fxW - fx) / e
+            dxT[power][k] = (fxT - fx) / e
+
+    return (dxW, dxT)
+    
 a = -1
 b = 1
-N = 4
+N = 3
 
 # Calculando w e t
 w, t = calculo_w0_t0(a, b, N)
 print("w:", w)
 print("t:", t)
 
+# todo fazer para N-1 graus da eq
+dW, dT = AproximaDerivada_QuasiNewton(0, N)
+
 # Definindo as funções f_j
 funcoes = definir_funcoes(a, b, N)
 
 # Exibindo as expressões
-for j, expr in enumerate(funcoes, start=1):
-    print(f"f_{j}(w, t) = {expr}")
+#for j, expr in enumerate(funcoes, start=1):
+    #print(f"f_{j}(w, t) = {expr}")
+
+
+
+    
