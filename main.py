@@ -2,6 +2,8 @@ import math
 import sympy as sp
 from sympy import symbols
 
+# Calcula os W0 e T0 iniciais com as condições impostas no enunciado
+# Retorna uma tupla com os vetores de W0 e T0
 def calculo_w0_t0(a, b, N):
     w = [0]*N
     t = [0]*N
@@ -16,8 +18,9 @@ def calculo_w0_t0(a, b, N):
 
     return (w, t)
 
-def g(a,b,N):
-    # Usando 1/3 Simpson
+# Método de Aproximação das Integrais com uma partição de m = 1000
+# Retorna um vetor com as integrais de x elevado aos expoentes de 0 a 2N -1 no intervalo [a , b]
+def Simpsom_1_3(a, b, N):
     m = 1000;
     h = (b - a)/m
 
@@ -46,14 +49,17 @@ def g(a,b,N):
 
             integral += c * pow(x, exp)
         result[exp] = (h/3) * integral
+
     return result;
 
-def definir_funcoes(a, b, N):
+# Monta os Sistemas de Equações 
+# Retorna um Vetor com as Expressões
+def Definir_Funcoes(a, b, N):
     w_sym = sp.symbols(f'w0:{N}')  
     t_sym = sp.symbols(f't0:{N}')  
 
     # Calculando os valores de g_j
-    g_values = g(a, b, N)
+    g_values = Simpsom_1_3(a, b, N)
 
     funcoes = []
     for j in range(1, 2*N + 1):  
@@ -67,17 +73,13 @@ def definir_funcoes(a, b, N):
 
     return funcoes
 
-def Matriz_Jacobiano(funcoes,N,):
-    # Usando o método Quasi Newton para achar as derivadas parciais
-
-    #for linha in range (2*N):
-        #for coluna in range(2*N):
-
-    return 0;
-
-def AproximaDerivada_QuasiNewton(N):
+# Calculo das Derivadas Parciais por Aproximação QuasiNewton
+# Retorna uma Tupla de Matrizes de Aproximações para Dw e Dt, em cada linha é a derivada de uma equação   
+# e cada coluna é um Wi com i de 0 a N para Dw 
+# e cada coluna é um Ti com i de 0 a N para Tw 
+def Aproxima_Derivada_QuasiNewton(N):
     
-    e = 10e-10
+    e = 10e-9
     dxW = [[0] * N for _ in range(2 * N)]
     dxT = [[0] * N for _ in range(2 * N)]
 
@@ -111,17 +113,19 @@ def AproximaDerivada_QuasiNewton(N):
             dxT[power][k] = (fxT - fx) / e
 
     return (dxW, dxT)
-    
-def MontaMatriz(dW, dT): 
-    M = [[0] * N*N for _ in range(2 * N)]
+
+# Monta Matriz Jacobiana de Derivadas Parciais a partir dos Vetores de Aproximações 
+# Retorna a Matriz M
+def Monta_Matriz(dW, dT, N): 
+    M = [[0] * 2*N for _ in range(2*N)]
     for linha in range(0, 2*N):
-        for k in range(0, N*N):
-            # metade dos elementos da linha sao dWi e outra metade dTi
-            if(k < (N*N)/2):
-                M[linha][k] = dW[linha][k]
-            else: M[linha][k] = dT[linha][math.floor(k - (N*N)/2)]
+        for k in range(0, N):  
+            M[linha][k] = dW[linha][k]
+            M[linha][k+N] = dT[linha][k]
     return M
 
+
+### Main 
 a = -1
 b = 1
 N = 2
@@ -130,18 +134,32 @@ N = 2
 w, t = calculo_w0_t0(a, b, N)
 print("w:", w)
 print("t:", t)
+print("\n")
 
-# todo fazer para N-1 graus da eq
-dW, dT = AproximaDerivada_QuasiNewton(N)
-
-M = MontaMatriz(dW, dT)
-print(M)
 # Definindo as funções f_j
-funcoes = definir_funcoes(a, b, N)
+funcoes = Definir_Funcoes(a, b, N)
 
-# Exibindo as expressões
-#for j, expr in enumerate(funcoes, start=1):
-    #print(f"f_{j}(w, t) = {expr}")
+# Calculando aproximações
+dW, dT = Aproxima_Derivada_QuasiNewton(N)
+
+# Exibindo resultados
+for i in range(0, 2*N):
+    print(f"f_{i+1}(w, t) = {funcoes[i]}")
+    print("\nAproximações: ")
+    for j in range(0, N):
+        print(f"∂{i+1}/w{j+1} = {dW[i][j]}")
+    for j in range(0, N):
+        print(f"∂{i+1}/t{j+1} = {dT[i][j]}")
+    print("\n")
+
+# Montando matriz
+M = Monta_Matriz(dW, dT, N)
+
+print("Matriz Jacobiana:")
+for i in range(0, 2*N):
+    print(M[i])
+
+
 
 
 
