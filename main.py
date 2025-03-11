@@ -53,6 +53,49 @@ def Simpsom_1_3(a, b, N):
 
     return result;
 
+def GeraMatrizIdentidade(n):
+    M = []
+    for i in range(n):
+        linha = [0] * n
+        linha[i] = 1
+        M.append(linha)
+    return M
+
+def Decomposicao_LU(A):
+    U = A.copy()
+    L = GeraMatrizIdentidade(A.shape[0])
+
+    for linha in range(0, A.shape[0]):
+        for proximaLinha in range(linha+1, A.shape[0]):
+          # para cada linha seguinte calcula um multiplicador
+          m = U[proximaLinha][linha]/U[linha][linha]
+          L[proximaLinha][linha] = m
+
+          # para cada elemento restante da linha
+          # atualiza com m * linha anterior
+          for coluna in range(linha, A.shape[0]):
+            U[proximaLinha][coluna] -= m*U[linha][coluna]
+
+    return L, U
+
+def ResolveSistemaLU(L, U, b):
+    # Converte L, U e b para arrays do NumPy
+    L = np.array(L, dtype=float)
+    U = np.array(U, dtype=float)
+    b = np.array(b, dtype=float)
+
+    # Ly = b
+    y = np.zeros_like(b)
+    for i in range(len(b)):
+        y[i] = b[i] - np.dot(L[i, :i], y[:i])
+    
+    # Ux = y
+    x = np.zeros_like(b)
+    for i in range(len(b) - 1, -1, -1):
+        x[i] = (y[i] - np.dot(U[i, i+1:], x[i+1:])) / U[i, i]
+    
+    return x
+
 # Monta os Sistemas de Equações 
 # Retorna um Vetor com as Expressões
 def Definir_Funcoes(a, b, N):
@@ -138,8 +181,11 @@ def Metodo_Newton(a, b, N, TOL=1e-8, max_iter=100):
         dW, dT = Aproxima_Derivada_QuasiNewton(w, t, N)
         J = np.array(Monta_Matriz(dW, dT, N))
         
-        # J(wk, tk) * s = -f(wk, tk)   
-        s = np.linalg.solve(J, -f_values) #TODO: implementar metodo de solução de sistemas lineares?
+        # Decomposição LU da matriz Jacobiana
+        L, U = Decomposicao_LU(J)
+        
+        # Resolvendo o sistema linear J(wk, tk) * s = -f(wk, tk) usando decomposição LU
+        s = ResolveSistemaLU(L, U, -f_values)
         
         w = [w[i] + s[i] for i in range(N)]
         t = [t[i] + s[i + N] for i in range(N)]
