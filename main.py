@@ -6,18 +6,26 @@ import numpy as np
 # Calcula os W0 e T0 iniciais com as condições impostas no enunciado
 # Retorna uma tupla com os vetores de W0 e T0
 def calculo_w0_t0(a, b, N):
-    w = [0]*N
-    t = [0]*N
+    w = [0] * N
+    t = [0] * N
 
-    for i in range(1, N+1, 1):
-        if(i <= N/2):
-            w[i-1] = i*(b-a)/(2*N)
-            t[i-1] = a + (i*w[i-1])/2
+    mid = N // 2  # Ponto médio (arredondado para baixo)
+
+    for i in range(N):
+        if i < mid:
+            w[i] = (i + 1) * (b - a) / (2 * N)
+            t[i] = a + (i + 1) * w[i] / 2
+        elif i == mid and N % 2 != 0:
+            # Caso especial para N ímpar: ponto médio
+            w[i] = (b - a) / N
+            t[i] = (a + b) / 2
         else:
-            w[i-1] = w[math.floor(N/2 + (N/2-i))]
-            t[i-1] = (a+b) - t[math.floor(N/2 + (N/2-i))]
+            # Espelha os valores da primeira metade
+            mirrored_index = N - i - 1
+            w[i] = w[mirrored_index]
+            t[i] = (a + b) - t[mirrored_index]
 
-    return (w, t)
+    return w, t
 
 # Método de Aproximação das Integrais com uma partição de m = 1000
 # Retorna um vetor com as integrais de x elevado aos expoentes de 0 a 2N -1 no intervalo [a , b]
@@ -206,7 +214,7 @@ def Metodo_Newton(a, b, N, TOL=1e-8, max_iter=100):
 # Executando o método iterativo
 a = -1
 b = 1
-N = 2
+N = 3
 w_final, t_final = Metodo_Newton(a, b, N)
 
 print("\nValores finais:")
