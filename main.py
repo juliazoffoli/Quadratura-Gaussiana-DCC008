@@ -1,6 +1,7 @@
 import math
 import sympy as sp
 from sympy import symbols
+import numpy as np
 
 # Calcula os W0 e T0 iniciais com as condições impostas no enunciado
 # Retorna uma tupla com os vetores de W0 e T0
@@ -77,8 +78,8 @@ def Definir_Funcoes(a, b, N):
 # Retorna uma Tupla de Matrizes de Aproximações para Dw e Dt, em cada linha é a derivada de uma equação   
 # e cada coluna é um Wi com i de 0 a N para Dw 
 # e cada coluna é um Ti com i de 0 a N para Tw 
-def Aproxima_Derivada_QuasiNewton(N):
-    
+
+def Aproxima_Derivada_QuasiNewton(w, t, N):
     e = 10e-9
     dxW = [[0] * N for _ in range(2 * N)]
     dxT = [[0] * N for _ in range(2 * N)]
@@ -124,43 +125,44 @@ def Monta_Matriz(dW, dT, N):
             M[linha][k+N] = dT[linha][k]
     return M
 
+def Metodo_Newton(a, b, N, TOL=1e-8, max_iter=100):
+    w, t = calculo_w0_t0(a, b, N)
+    
+    for num_iter in range(max_iter):
+        funcoes = Definir_Funcoes(a, b, N)
+        
+        # Calculando os valores de f(wk, tk) com os valores atuais de w e t
+        f_values = np.array([float(f.subs({f'w{i}': w[i] for i in range(N)} | 
+                                       {f't{i}': t[i] for i in range(N)})) for f in funcoes])
+        
+        dW, dT = Aproxima_Derivada_QuasiNewton(w, t, N)
+        J = np.array(Monta_Matriz(dW, dT, N))
+        
+        # J(wk, tk) * s = -f(wk, tk)   
+        s = np.linalg.solve(J, -f_values) #TODO: implementar metodo de solução de sistemas lineares?
+        
+        w = [w[i] + s[i] for i in range(N)]
+        t = [t[i] + s[i + N] for i in range(N)]
+        
+        # Norma infinito de s para critério de parada
+        norma_s = max(abs(s))
+        print(f"Iteração {num_iter + 1}: Norma infinito de s = {norma_s}")
+        
+        # Critério de parada
+        if norma_s < TOL:
+            print("Convergência alcançada!")
+            break
+    else:
+        print("Número máximo de iterações atingido sem convergência.")
+    
+    return w, t
 
-### Main 
+# Executando o método iterativo
 a = -1
 b = 1
 N = 2
+w_final, t_final = Metodo_Newton(a, b, N)
 
-# Calculando w e t
-w, t = calculo_w0_t0(a, b, N)
-print("w:", w)
-print("t:", t)
-print("\n")
-
-# Definindo as funções f_j
-funcoes = Definir_Funcoes(a, b, N)
-
-# Calculando aproximações
-dW, dT = Aproxima_Derivada_QuasiNewton(N)
-
-# Exibindo resultados
-for i in range(0, 2*N):
-    print(f"f_{i+1}(w, t) = {funcoes[i]}")
-    print("\nAproximações: ")
-    for j in range(0, N):
-        print(f"∂{i+1}/w{j+1} = {dW[i][j]}")
-    for j in range(0, N):
-        print(f"∂{i+1}/t{j+1} = {dT[i][j]}")
-    print("\n")
-
-# Montando matriz
-M = Monta_Matriz(dW, dT, N)
-
-print("Matriz Jacobiana:")
-for i in range(0, 2*N):
-    print(M[i])
-
-
-
-
-
-    
+print("\nValores finais:")
+print("w:", [float(wi) for wi in w_final])
+print("t:", [float(ti) for ti in t_final])
