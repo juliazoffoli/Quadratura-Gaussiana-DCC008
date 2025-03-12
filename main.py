@@ -210,13 +210,16 @@ def Metodo_Newton(a, b, N, TOL=1e-8, max_iter=100):
     
     return w, t
 
-def Quadratura_Gaussiana(N, w, t, a, b):
+def Funcao_Base(a, b, x):
+    return math.exp(a * x + b)
+
+def Quadratura_Gaussiana(N, w, t, a, b, func):
     sum = 0
     for i in range(0, N):
-        sum += w[i]*pow(math.e, (a*t[i] + b))
+        sum += w[i] * func(a, b, t[i])
     return sum
 
-def Simpsom_1_3_Para_Sol_Analitica(a, b):
+def Simpsom_1_3_Para_Sol_Analitica(a, b, func):
     m = 1000;
     h = (b - a)/m
 
@@ -232,7 +235,7 @@ def Simpsom_1_3_Para_Sol_Analitica(a, b):
             c=2
         else: c = 4 
 
-        integral += c * math.exp(a * x + b)
+        integral += c * func(a, b, x)
 
     return (h/3) * integral
 
@@ -245,6 +248,7 @@ testes = [
     [-3, 3, 7]
 ]
 
+# Realiza testes para a função exp(ax + b)
 for a, b, N in testes:
     print(f"\n\n\nCalculando para o intervalo [{a}, {b}] com N={N}")
 
@@ -255,8 +259,8 @@ for a, b, N in testes:
     print("w:", [float(wi) for wi in w_final])
     print("t:", [float(ti) for ti in t_final])
 
-    solucao = Simpsom_1_3_Para_Sol_Analitica(a, b)
-    gauss = Quadratura_Gaussiana(N, w_final, t_final, a, b)
+    solucao = Simpsom_1_3_Para_Sol_Analitica(a, b, Funcao_Base)
+    gauss = Quadratura_Gaussiana(N, w_final, t_final, a, b, Funcao_Base)
     erro = (solucao - gauss)/solucao
 
     print("Solucao Analitica: ", solucao)
