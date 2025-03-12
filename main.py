@@ -236,3 +236,29 @@ def Simpsom_1_3_Para_Sol_Analitica(a, b):
 
     return (h/3) * integral
 
+# [a, b, N]
+testes = [
+    [-1, 1, 2],
+    [-1, 1, 7],
+    [0, 3, 2],
+    [0, 3, 5],
+    [-3, 3, 7]
+]
+
+for a, b, N in testes:
+    print(f"\n\n\nCalculando para o intervalo [{a}, {b}] com N={N}")
+
+    # Executando o método iterativo
+    w_final, t_final = Metodo_Newton(a, b, N)
+
+    print("\nValores finais:")
+    print("w:", [float(wi) for wi in w_final])
+    print("t:", [float(ti) for ti in t_final])
+
+    solucao = Simpsom_1_3_Para_Sol_Analitica(a, b)
+    gauss = Quadratura_Gaussiana(N, w_final, t_final, a, b)
+    erro = (solucao - gauss)/solucao
+
+    print("Solucao Analitica: ", solucao)
+    print("Quadratura de Gauss: ", gauss)
+    print("Erro: ", erro)
