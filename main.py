@@ -29,7 +29,7 @@ def calculo_w0_t0(a, b, N):
 
 # Método de Aproximação das Integrais com uma partição de m = 1000
 # Retorna um vetor com as integrais de x elevado aos expoentes de 0 a 2N -1 no intervalo [a , b]
-def Simpsom_1_3(a, b, N):
+def Simpsom_1_3_Para_Integral(a, b, N):
     m = 1000;
     h = (b - a)/m
 
@@ -111,7 +111,7 @@ def Definir_Funcoes(a, b, N):
     t_sym = sp.symbols(f't0:{N}')  
 
     # Calculando os valores de g_j
-    g_values = Simpsom_1_3(a, b, N)
+    g_values = Simpsom_1_3_Para_Integral(a, b, N)
 
     funcoes = []
     for j in range(1, 2*N + 1):  
@@ -129,7 +129,6 @@ def Definir_Funcoes(a, b, N):
 # Retorna uma Tupla de Matrizes de Aproximações para Dw e Dt, em cada linha é a derivada de uma equação   
 # e cada coluna é um Wi com i de 0 a N para Dw 
 # e cada coluna é um Ti com i de 0 a N para Tw 
-
 def Aproxima_Derivada_QuasiNewton(w, t, N):
     e = 10e-9
     dxW = [[0] * N for _ in range(2 * N)]
@@ -211,12 +210,29 @@ def Metodo_Newton(a, b, N, TOL=1e-8, max_iter=100):
     
     return w, t
 
-# Executando o método iterativo
-a = -1
-b = 1
-N = 3
-w_final, t_final = Metodo_Newton(a, b, N)
+def Quadratura_Gaussiana(N, w, t, a, b):
+    sum = 0
+    for i in range(0, N):
+        sum += w[i]*pow(math.e, (a*t[i] + b))
+    return sum
 
-print("\nValores finais:")
-print("w:", [float(wi) for wi in w_final])
-print("t:", [float(ti) for ti in t_final])
+def Simpsom_1_3_Para_Sol_Analitica(a, b):
+    m = 1000;
+    h = (b - a)/m
+
+    c = 1
+    integral = 0
+    for i in range(0, m+1, 1):
+        x = a + i * h
+
+        #ajuste de coeficientes
+        if(i == 0 or i==m):
+            c=1
+        elif(i%2 == 0):
+            c=2
+        else: c = 4 
+
+        integral += c * math.exp(a * x + b)
+
+    return (h/3) * integral
+
