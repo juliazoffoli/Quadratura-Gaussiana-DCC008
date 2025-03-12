@@ -1,4 +1,0 @@
-- integrais pelo metodo de simpsons
-- quasi para fazer as derivadas
-- derivadas para montar a matriz J
-- sistema usando newton (aula)

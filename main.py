@@ -29,7 +29,7 @@ def calculo_w0_t0(a, b, N):
 
 # Método de Aproximação das Integrais com uma partição de m = 1000
 # Retorna um vetor com as integrais de x elevado aos expoentes de 0 a 2N -1 no intervalo [a , b]
-def Simpsom_1_3_Para_Integral(a, b, N):
+def Simpson_1_3_Para_Integral(a, b, N):
     m = 1000;
     h = (b - a)/m
 
@@ -111,7 +111,7 @@ def Definir_Funcoes(a, b, N):
     t_sym = sp.symbols(f't0:{N}')  
 
     # Calculando os valores de g_j
-    g_values = Simpsom_1_3_Para_Integral(a, b, N)
+    g_values = Simpson_1_3_Para_Integral(a, b, N)
 
     funcoes = []
     for j in range(1, 2*N + 1):  
@@ -219,7 +219,7 @@ def Quadratura_Gaussiana(N, w, t, a, b, func):
         sum += w[i] * func(a, b, t[i])
     return sum
 
-def Simpsom_1_3_Para_Sol_Analitica(a, b, func):
+def Simpson_1_3_Para_Sol_Analitica(a, b, func):
     m = 1000;
     h = (b - a)/m
 
@@ -259,7 +259,7 @@ for a, b, N in testes:
     print("w:", [float(wi) for wi in w_final])
     print("t:", [float(ti) for ti in t_final])
 
-    solucao = Simpsom_1_3_Para_Sol_Analitica(a, b, Funcao_Base)
+    solucao = Simpson_1_3_Para_Sol_Analitica(a, b, Funcao_Base)
     gauss = Quadratura_Gaussiana(N, w_final, t_final, a, b, Funcao_Base)
     erro = (solucao - gauss)/solucao
 
