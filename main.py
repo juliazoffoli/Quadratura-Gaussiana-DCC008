@@ -265,4 +265,4 @@ for a, b, solucao in testes:
         print("Solucao Analitica: ", round(float(solucao), 8))
         print("Solucao Aproximada: ", round(float(solucao_aproximada), 8))
         print("Quadratura de Gauss: ", round(float(gauss), 8))
-        print("Erro: ", round(float(erro), 8))
+        print("Erro: ", erro)
