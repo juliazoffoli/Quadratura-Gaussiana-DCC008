@@ -256,8 +256,8 @@ for a, b, N in testes:
     w_final, t_final = Metodo_Newton(a, b, N)
 
     print("\nValores finais:")
-    print("w:", [float(wi) for wi in w_final])
-    print("t:", [float(ti) for ti in t_final])
+    print("w:", [round(float(wi), 8) for wi in w_final])
+    print("t:", [round(float(ti),8) for ti in t_final])
 
     solucao = Simpson_1_3_Para_Sol_Analitica(a, b, Funcao_Base)
     gauss = Quadratura_Gaussiana(N, w_final, t_final, a, b, Funcao_Base)
