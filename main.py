@@ -242,7 +242,8 @@ def Simpson_1_3_Para_Sol_Analitica(a, b, func):
 # [a, b, solucao_analitica ]
 testes = [
     [-1, 1, 6.3890561  ],
-    [-3, 3, 54251.5963 ]
+    [-3, 3, 54251.5963 ],
+    [-1, 3, 53.59815   ]
 ]
 
 # Realiza testes para a função exp(ax + b)
