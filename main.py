@@ -239,30 +239,29 @@ def Simpson_1_3_Para_Sol_Analitica(a, b, func):
 
     return (h/3) * integral
 
-# [a, b, N]
+# [a, b, solucao_analitica ]
 testes = [
-    [-1, 1, 2],
-    [-1, 1, 7],
-    [0, 3, 2],
-    [0, 3, 5],
-    [-3, 3, 7]
+    [-1, 1, 6.3890561  ],
+    [-3, 3, 54251.5963 ]
 ]
 
 # Realiza testes para a função exp(ax + b)
-for a, b, N in testes:
-    print(f"\n\n\nCalculando para o intervalo [{a}, {b}] com N={N}")
+for a, b, solucao in testes:
+    solucao_aproximada = Simpson_1_3_Para_Sol_Analitica(a, b, Funcao_Base)
+    for N in range(1, 8):
+        print(f"\n\n\nCalculando para o intervalo [{a}, {b}] com N={N}")
 
-    # Executando o método iterativo
-    w_final, t_final = Metodo_Newton(a, b, N)
+        # Executando o método iterativo
+        w_final, t_final = Metodo_Newton(a, b, N)
 
-    print("\nValores finais:")
-    print("w:", [round(float(wi), 8) for wi in w_final])
-    print("t:", [round(float(ti),8) for ti in t_final])
+        print("\nValores finais:")
+        print("w:", [round(float(wi), 8) for wi in w_final])
+        print("t:", [round(float(ti),8) for ti in t_final])
 
-    solucao = Simpson_1_3_Para_Sol_Analitica(a, b, Funcao_Base)
-    gauss = Quadratura_Gaussiana(N, w_final, t_final, a, b, Funcao_Base)
-    erro = (solucao - gauss)/solucao
+        gauss = Quadratura_Gaussiana(N, w_final, t_final, a, b, Funcao_Base)
+        erro = (solucao - gauss)/solucao
 
-    print("Solucao Analitica: ", solucao)
-    print("Quadratura de Gauss: ", gauss)
-    print("Erro: ", erro)
+        print("Solucao Analitica: ", round(float(solucao), 8))
+        print("Solucao Aproximada: ", round(float(solucao_aproximada), 8))
+        print("Quadratura de Gauss: ", round(float(gauss), 8))
+        print("Erro: ", round(float(erro), 8))
