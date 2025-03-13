@@ -211,7 +211,8 @@ def Metodo_Newton(a, b, N, TOL=1e-8, max_iter=100):
     return w, t
 
 def Funcao_Base(a, b, x):
-    return math.exp(a * x + b)
+    # return x**5 => função também utilizada para calcularmos integral no relatório
+    return math.exp(a * x + b) # função padrão exigida no relatório
 
 def Quadratura_Gaussiana(N, w, t, a, b, func):
     sum = 0
@@ -238,6 +239,13 @@ def Simpson_1_3_Para_Sol_Analitica(a, b, func):
         integral += c * func(a, b, x)
 
     return (h/3) * integral
+
+# conjunto de testes que foram usados para f(x) = x^5
+# testes = [
+#    [-1, 1, 0.0          ],
+#    [-3, 3, 0.0          ],
+#    [-1, 3, 121.333333   ]
+# ]
 
 # [a, b, solucao_analitica ]
 testes = [
